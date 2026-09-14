@@ -1,5 +1,5 @@
 from app.data.tasks import tasks
-from app.schemas.task import Task,Status
+from app.schemas.task import Task,Status,UpdateTask
 def get_all_tasks(status:Status|None=None,skip:int=0,limit:int=10):
     if status is None:
         return tasks[skip:skip+limit]
@@ -34,5 +34,15 @@ def update_task(task_id:int ,updated_task:Task):
              #update
             task["title"]=updated_task.title
             task["status"]=updated_task.status.value
+            return task 
+    return None
+def patch_task(task_id:int,updated_task:UpdateTask):
+    for task in tasks:
+        if(task["id"]==task_id):
+                #update
+            if updated_task.title is not None:
+                task["title"]=updated_task.title
+            if updated_task.status is not None:
+                task["status"]=updated_task.status.value
             return task 
     return None
