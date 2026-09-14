@@ -1,7 +1,5 @@
-from fastapi import FastAPI,HTTPException,Query
+from fastapi import FastAPI
 from app.routers.tasks import router as task_router
-from pydantic import BaseModel,Field,field_validator
-from enum import Enum
 
 
 app=FastAPI()#this creates fastAPI application
