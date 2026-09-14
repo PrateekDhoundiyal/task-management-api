@@ -18,7 +18,7 @@ def create_task(task:Task):
     #tasks -1
     #Note:This method for id generation is not realiable in real backend as it can cause reusability of id's due to deletion
     #we will use better method when we will use MySQL
-    new_id=len(tasks)+1 #fixed using mysql
+    new_id=len(tasks)+1 #Temporary MySQL will handle IDs buffer
         #add this id into a dictionary
     new_task={
            "id":new_id,
@@ -45,4 +45,10 @@ def patch_task(task_id:int,updated_task:UpdateTask):
             if updated_task.status is not None:
                 task["status"]=updated_task.status.value
             return task 
+    return None
+def delete_by_id(task_id:int):
+    for task in tasks:
+        if(task["id"]==task_id):
+            tasks.remove(task)
+            return True
     return None

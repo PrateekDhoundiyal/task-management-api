@@ -1,7 +1,6 @@
 from fastapi import APIRouter,Query,HTTPException
 from app.schemas.task import Status,TaskResponse,Task,UpdateTask
-from app.data.tasks import tasks
-from app.services.task_service import get_task_by_id,create_task,get_all_tasks,update_task as update_task_service,patch_task as patch_task_service
+from app.services.task_service import get_task_by_id,create_task,get_all_tasks,update_task as update_task_service,patch_task as patch_task_service,delete_by_id
 
 router=APIRouter()
 @router.get("/tasks",response_model=list[TaskResponse])
@@ -39,8 +38,7 @@ def patch_task(task_id:int,updated_task:UpdateTask):
 #DELETE for deleting tasks
 @router.delete("/tasks/{task_id}",status_code=204)
 def delete_task(task_id:int):
-   for task in tasks:
-      if(task["id"]==task_id):
-         tasks.remove(task)
-         return
-   raise HTTPException(status_code=404,detail="Task not found")
+   result=delete_by_id(task_id)
+   if result is None:
+    raise HTTPException(status_code=404,detail="Task not found")
+   return 
