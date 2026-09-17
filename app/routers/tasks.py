@@ -1,14 +1,15 @@
-from fastapi import APIRouter,Query,HTTPException
+from fastapi import APIRouter,Query,HTTPException,Depends
 from app.schemas.task import Status,TaskResponse,Task,UpdateTask
 from app.services.task_service import get_task_by_id,create_task,get_all_tasks,update_task as update_task_service,patch_task as patch_task_service,delete_by_id
-
+from app.dependencies import get_db
+from sqlalchemy.orm import Session
 router=APIRouter()
 @router.get("/tasks",response_model=list[TaskResponse])
-def get_tasks(status:Status|None=None,skip:int=Query(0,ge=0),limit:int=Query(10,gt=0)):
-    return get_all_tasks(status,skip,limit)
+def get_tasks(status:Status|None=None,skip:int=Query(0,ge=0),limit:int=Query(10,gt=0),db:Session=Depends(get_db)):
+    return get_all_tasks(status,skip,limit,db)
 @router.get("/tasks/{task_id}",response_model=TaskResponse)
-def get_task(task_id:int):
- result=get_task_by_id(task_id)
+def get_task(task_id:int,db:Session=Depends(get_db)):
+ result=get_task_by_id(task_id,db)
  if result is None:
    raise HTTPException(status_code=404,detail="Task doesn't exist")
  return result
@@ -18,8 +19,8 @@ def get_task(task_id:int):
     
 #we can directly specify status code into the decorator , fastAPI lets us do that
 @router.post("/tasks",status_code=201,response_model=TaskResponse)
-def create_post(task:Task):
-    result=create_task(task)
+def create_post(task:Task,db:Session=Depends(get_db)):
+    result=create_task(task,db)
     return result
 #PUT for updating the task | Need to change later behaves same as patch
 @router.put("/tasks/{task_id}",response_model=TaskResponse)
