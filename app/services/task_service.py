@@ -53,9 +53,11 @@ def patch_task(task_id:int,updated_task:UpdateTask,db:Session):
     db.commit()
     db.refresh(task)
     return task
-def delete_by_id(task_id:int):
-    for task in tasks:
-        if(task["id"]==task_id):
-            tasks.remove(task)
-            return True
-    return None
+def delete_by_id(task_id:int,db:Session):
+    task=db.query(TaskModel).filter(TaskModel.id==task_id).first()
+    if task is None:
+        return None
+    db.delete(task)
+    db.commit()
+
+    return True

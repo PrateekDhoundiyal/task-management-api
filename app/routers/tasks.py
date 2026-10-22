@@ -38,8 +38,8 @@ def patch_task(task_id:int,updated_task:UpdateTask,db:Session=Depends(get_db)):
    return result   
 #DELETE for deleting tasks
 @router.delete("/tasks/{task_id}",status_code=204)
-def delete_task(task_id:int):
-   result=delete_by_id(task_id)
+def delete_task(task_id:int,db:Session=Depends(get_db)):
+   result=delete_by_id(task_id,db)
    if result is None:
     raise HTTPException(status_code=404,detail="Task not found")
    return 
