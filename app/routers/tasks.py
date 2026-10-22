@@ -24,15 +24,15 @@ def create_post(task:Task,db:Session=Depends(get_db)):
     return result
 #PUT for updating the task | Need to change later behaves same as patch
 @router.put("/tasks/{task_id}",response_model=TaskResponse)
-def update_task(task_id: int,updated_task:Task):
-   result=update_task_service(task_id,updated_task)
+def update_task(task_id: int,updated_task:Task,db:Session=Depends(get_db)):
+   result=update_task_service(task_id,updated_task,db)
    if result is None:
     raise HTTPException(status_code=404,detail="Task doesn't exist")
    return result
 #creating patch endpoint so that user can willingly update in parts
 @router.patch("/tasks/{task_id}",response_model=TaskResponse)
-def patch_task(task_id:int,updated_task:UpdateTask):
-   result=patch_task_service(task_id,updated_task)
+def patch_task(task_id:int,updated_task:UpdateTask,db:Session=Depends(get_db)):
+   result=patch_task_service(task_id,updated_task,db)
    if result is None:
     raise HTTPException(status_code=404,detail="Task doesn't exist")
    return result   

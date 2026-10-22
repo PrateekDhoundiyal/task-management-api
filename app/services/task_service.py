@@ -30,24 +30,29 @@ def create_task(task:Task,db:Session):
     db.refresh(new_task)
     
     return new_task
-def update_task(task_id:int ,updated_task:Task):
-    for task in tasks:
-        if(task["id"]==task_id):
-             #update
-            task["title"]=updated_task.title
-            task["status"]=updated_task.status.value
-            return task 
+def update_task(task_id:int ,updated_task:Task,db:Session):
+  task=db.query(TaskModel).filter(TaskModel.id==task_id).first()
+  if task is None:
     return None
-def patch_task(task_id:int,updated_task:UpdateTask):
-    for task in tasks:
-        if(task["id"]==task_id):
-                #update
-            if updated_task.title is not None:
-                task["title"]=updated_task.title
-            if updated_task.status is not None:
-                task["status"]=updated_task.status.value
-            return task 
-    return None
+
+  task.title=updated_task.title
+  task.status=updated_task.status.value
+
+  db.commit()
+  db.refresh(task)
+  return task
+def patch_task(task_id:int,updated_task:UpdateTask,db:Session):
+    task=db.query(TaskModel).filter(TaskModel.id==task_id).first()
+    if task is None:
+     return None
+
+    if updated_task.title is not None:
+       task.title=updated_task.title
+    if updated_task.status is not None:
+           task.status=updated_task.status.value
+    db.commit()
+    db.refresh(task)
+    return task
 def delete_by_id(task_id:int):
     for task in tasks:
         if(task["id"]==task_id):
